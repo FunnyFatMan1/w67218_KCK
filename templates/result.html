@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Wyniki gracza {{ nickname }}#{{ tagline }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background: #0e0e10;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .window {
+            background: #6b6b6b;
+            max-width: 700px;
+            margin: 50px auto;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+            color: #000;
+        }
+
+        .title {
+            background: #ededed;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .summary-box {
+            background: #ededed;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-box h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .summary-list {
+            list-style-type: disc;
+            list-style-position: inside;
+            padding-left: 0;
+            font-size: 1rem;
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        .placements {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .place-box {
+            width: 200px;
+            padding: 10px;
+            border-radius: 20px;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .first  { background-color: #f1c40f; color: #000; }
+        .second { background-color: #bdc3c7; color: #000; }
+        .third  { background-color: #8e5c2c; }
+        .fourth { background-color: #5dade2; }
+        .other  { background-color: #2f2f2f; }
+
+        .chart-container {
+            background-color: #dcdcdc;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #546061;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            background-color: #414a4b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="window">
+    <div class="title">Wyniki dla konta <br> <strong>{{ nickname }}</strong>#{{ tagline }}</div>
+
+    <div class="summary-box">
+        <h2>Statystyki z ostatnich {{ analysis.total }} gier</h2>
+        <ul class="summary-list">
+            <li>Średnia pozycja: <strong>{{ analysis.average }}</strong></li>
+            <li>Top 1: <strong>{{ analysis.top1_percent }}%</strong></li>
+            <li>Top 4: <strong>{{ analysis.top4_percent }}%</strong></li>
+        </ul>
+    </div>
+
+    <div class="summary-box">
+        <h2>Rozkład miejsc</h2>
+        <div class="placements">
+            <div class="place-box first">1.miejsce: {{ analysis.placement_distribution["1"] }}</div>
+            <div class="place-box second">2.miejsce: {{ analysis.placement_distribution["2"] }}</div>
+            <div class="place-box third">3.miejsce: {{ analysis.placement_distribution["3"] }}</div>
+            <div class="place-box fourth">4.miejsce: {{ analysis.placement_distribution["4"] }}</div>
+            <div class="place-box other">
+                pozostałe:
+                {{
+                    analysis.placement_distribution["5"]
+                    + analysis.placement_distribution["6"]
+                    + analysis.placement_distribution["7"]
+                    + analysis.placement_distribution["8"]
+                }}
+            </div>
+        </div>
+    </div>
+
+    <div class="summary-box chart-container">
+        <h2>Histogram rozkładu miejsc</h2>
+        <canvas id="placementChart" width="400" height="200"></canvas>
+        <script>
+            const ctx = document.getElementById('placementChart').getContext('2d');
+            const placementData = {
+                labels: ["1", "2", "3", "4", "5", "6", "7", "8"],
+                datasets: [{
+                    label: 'Liczba gier',
+                    data: [
+                        {{ analysis.placement_distribution["1"] }},
+                        {{ analysis.placement_distribution["2"] }},
+                        {{ analysis.placement_distribution["3"] }},
+                        {{ analysis.placement_distribution["4"] }},
+                        {{ analysis.placement_distribution["5"] }},
+                        {{ analysis.placement_distribution["6"] }},
+                        {{ analysis.placement_distribution["7"] }},
+                        {{ analysis.placement_distribution["8"] }}
+                    ],
+                    backgroundColor: '#546061',
+                    borderRadius: 6
+                }]
+            };
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: placementData,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 }
+                        }
+                    }
+                }
+            });
+        </script>
+    </div>
+
+    <a href="/" class="back-link">← Wróć do wyszukiwarki</a>
+</div>
+
+</body>
+</html>
