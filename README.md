@@ -1,2 +1,3 @@
-# w67218_KCK
-projekt z przedmiotu komunikacja człowiek-komputer 6IID/2022-GP02
+# TFT Tracker
+Aby skorzystać z projektu lokalnie, należy stworzyć plik ".env" ze zmienną "RIOT_API_KEY" i podać swój klucz API do Riot Games.
+
